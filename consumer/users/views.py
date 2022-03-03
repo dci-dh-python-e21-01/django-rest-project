@@ -43,3 +43,16 @@ def local_user_view(request, pk):
 
 #     user = await sync_to_async(filter_local_users, thread_sensitive=True)(user['id'])
 #     return render(request, 'users/user_view.html', {'user': user})
+
+async def dogs_view(request):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            "http://localhost:8000/users/dogs/", auth=("admin", "password")
+        )
+    json = response.json()
+    dogs = json["results"]
+    return render(
+        request,
+        "users/dogs_view.html",
+        {"dogs": dogs},
+    )

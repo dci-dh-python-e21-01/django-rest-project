@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <h1>Our Dogs</h1>
+    {% for dog in dogs %}
+      <p>
+        <b>Name:</b> {{dog.name}} <br>
+        <b>Breed: </b> {{dog.breed}} <br>
+        <b>Age:</b> {{dog.age}} <br>
+        <b>Is friendly?</b> {{dog.is_friendly}} <br>
+      </p>
+    {% endfor %}
+    
+  </body>
+</html>
