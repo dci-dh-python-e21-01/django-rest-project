@@ -8,7 +8,8 @@
     <h2>Remote</h2>
     {% for user in remote_users %}
       <p>
-        <b>Username: </b> {{user.username}}<br>
+        <b>User ID: </b> {{user.id}} <br>
+        <b>Username:</b> <a href="{% url 'remote_user_view' user.id %}">{{user.username}}</a><br>
         <b>Email: </b> {{user.email}}<br>
         <b>URL: </b> {{user.url}}
       </p>
@@ -16,7 +17,8 @@
     <h2>Local</h2>
     {% for user in local_users %}
       <p>
-        <b>Username: </b> {{user.username}}<br>
+        <b>User ID: </b> {{user.id}} <br>
+        <b>Username:</b> <a href="{% url 'local_user_view' user.pk %}">{{user.username}}</a><br>
         <b>Email: </b> {{user.email}}<br>
         <b>URL: </b> {{user.url}}
       </p>

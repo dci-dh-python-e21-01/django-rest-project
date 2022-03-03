@@ -1,9 +1,10 @@
 # Source: https://www.django-rest-framework.org/tutorial/quickstart/
 
 from django.contrib.auth.models import User, Group
+from .models import Dog
 from rest_framework import viewsets
 from rest_framework import permissions
-from .serializers import UserSerializer, GroupSerializer
+from .serializers import UserSerializer, GroupSerializer, DogSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,4 +24,13 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class DogViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows dogs to be viewed or edited.
+    """
+
+    queryset = Dog.objects.all()
+    serializer_class = DogSerializer
     permission_classes = [permissions.IsAuthenticated]
