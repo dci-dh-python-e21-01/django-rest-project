@@ -42,6 +42,8 @@ def local_user_view(request, pk):
 #     user = await sync_to_async(filter_local_users, thread_sensitive=True)(user['id'])
 #     return render(request, 'users/user_view.html', {'user': user})
 
+
+#to be finished 
 async def add_user(request):
     if request.method == "POST":
         async with httpx.AsyncClient() as client:
@@ -66,6 +68,7 @@ async def delete_user(request, id):
 
     return render(request, "users/delete_user.html")
 
+#to be finished 
 async def edit_user(request, id):
     if request.method == "POST":
         async with httpx.AsyncClient() as client:
