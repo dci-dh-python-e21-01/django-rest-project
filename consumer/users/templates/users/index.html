@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-  </head>
-  <body>
+{% extends "users/base.html" %}
+{% block content %}
+
     <h1>The users</h1>
     <h2>Remote</h2>
     {% for user in remote_users %}
@@ -24,6 +21,8 @@
       </p>
     {% endfor %}
 
+    <h3>Add new user <a href="{% url 'add_user' %}">here </a> </h3>
+
     <h3>Check out our dogs <a href="{% url 'dogs_view' %}">here</a> </h3>
-  </body>
-</html>
+{% endblock content%}
+

@@ -1,18 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-  </head>
-  <body>
+{% extends "users/base.html" %}
+{% block content %}
     <h1>Our Dogs</h1>
     {% for dog in dogs %}
       <p>
-        <b>Name:</b> {{dog.name}} <br>
+        <b>ID:</b> {{dog.id}} <br>
+        <b>Name:</b> <a href="{% url 'dog_detail' dog.id %}">{{dog.name}}</a> <br>
         <b>Breed: </b> {{dog.breed}} <br>
-        <b>Age:</b> {{dog.age}} <br>
-        <b>Is friendly?</b> {{dog.is_friendly}} <br>
+        
       </p>
     {% endfor %}
-    
-  </body>
-</html>
+    <p>Add your dog <a href="{% url 'add_dog' %}"> here </a> </p>
+
+{% endblock content %}

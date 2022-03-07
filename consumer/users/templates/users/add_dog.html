@@ -1,0 +1,11 @@
+{% extends "users/base.html" %}
+{% block content %}
+    <h1>Add your dog</h1>
+<div >
+    <form method="post">
+        {% csrf_token %}
+        {{ dog_form.as_p }}
+        <button type="submit" >Submit</button>
+    </form>
+</div>    
+{% endblock content %}

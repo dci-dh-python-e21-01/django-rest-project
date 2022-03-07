@@ -1,16 +1,14 @@
 import httpx
 from asgiref.sync import sync_to_async
-
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-
+from .forms import DogForm, UserForm
 
 def get_local_users():
     return list(User.objects.all())
 
-def filter_local_users(id):
-    return User.objects.filter(id=id)
+# def filter_local_users(id):
+#     return User.objects.filter(id=id)
 
 async def index(request):
     async with httpx.AsyncClient() as client:
@@ -44,6 +42,18 @@ def local_user_view(request, pk):
 #     user = await sync_to_async(filter_local_users, thread_sensitive=True)(user['id'])
 #     return render(request, 'users/user_view.html', {'user': user})
 
+async def add_user(request):
+    if request.method == "POST":
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"http://localhost:8000/users/users/",
+                auth=("admin", "password"),
+                data=request.POST
+            )
+        return redirect("/users")
+
+    return render(request, "users/add_user.html", { "user_form": UserForm()})
+
 async def dogs_view(request):
     async with httpx.AsyncClient() as client:
         response = await client.get(
@@ -56,3 +66,54 @@ async def dogs_view(request):
         "users/dogs_view.html",
         {"dogs": dogs},
     )
+async def dogs_detail(request, id):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"http://127.0.0.1:8000/users/dogs/{id}/", auth=('admin', 'password'))
+        dog = response.json()
+    return render(request, 'users/dog_view.html', {'dog': dog})
+
+async def add_dog(request):
+    if request.method == "POST":
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"http://localhost:8000/users/dogs/",
+                auth=("admin", "password"),
+                data=request.POST
+            )
+        return redirect("/users/dogs")
+
+    return render(request, "users/add_dog.html", { "dog_form": DogForm()})
+
+async def edit_dog(request, id):
+    if request.method == "POST":
+        async with httpx.AsyncClient() as client:
+            response = await client.put(
+                f"http://localhost:8000/users/dogs/{id}/",
+                auth=("admin", "password"),
+                data=request.POST
+            )
+        return redirect(f"/users/dogs/{id}")
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"http://localhost:8000/users/dogs/{id}/", auth=("admin", "password"))
+    dog = response.json()
+    
+    return render(request, "users/edit_dog.html", { "dog": DogForm(initial={
+        "id": dog["id"],
+        "name": dog["name"],
+        "breed": dog["breed"],
+        "age": dog["age"],
+        "is_friendly": dog["is_friendly"],
+    }) })
+
+async def delete_dog(request, id):
+    if request.method == "POST":
+        async with httpx.AsyncClient() as client:
+            response = await client.delete(
+                f"http://localhost:8000/users/dogs/{id}/",
+                auth=("admin", "password")
+            )
+        return redirect("/users/dogs")
+
+    return render(request, "users/delete_dog.html")
+

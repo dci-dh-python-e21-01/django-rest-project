@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-  </head>
-  <body>
+{% extends "users/base.html" %}
+{% block content %}
     <h1>User {{user.id }}</h1>
       <p>
         <b>Username: </b> {{user.username}}<br>
         <b>Email: </b> {{user.email}}<br>
         <b>URL: </b> {{user.url}}
       </p>
-  </body>
-</html>
+{% endblock content %}

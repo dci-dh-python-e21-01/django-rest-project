@@ -1,0 +1,14 @@
+{% extends "users/base.html" %}
+{% block content %}
+
+    <h1>Dog {{dog.id }}</h1>
+    <p>
+        <b>Name:</b> {{dog.name}} <br>
+        <b>Breed: </b> {{dog.breed}} <br>
+        <b>Age:</b> {{dog.age}} <br>
+        <b>Is friendly?</b> {{dog.is_friendly}} <br>
+      </p>
+      <p><a href="{% url 'edit_dog' dog.id %}">Edit</a></p>
+      <p><a href="{% url 'delete_dog' dog.id %}">Delete</a></p>
+
+{% endblock content %}
