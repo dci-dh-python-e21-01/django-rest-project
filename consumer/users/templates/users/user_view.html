@@ -6,4 +6,7 @@
         <b>Email: </b> {{user.email}}<br>
         <b>URL: </b> {{user.url}}
       </p>
+      <p><a href="{% url 'edit_user' user.id %}">Edit</a></p>
+      <p><a href="{% url 'delete_user' user.id %}">Delete</a></p>
 {% endblock content %}
+

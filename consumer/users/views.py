@@ -50,9 +50,43 @@ async def add_user(request):
                 auth=("admin", "password"),
                 data=request.POST
             )
+            print(response)
         return redirect("/users")
 
-    return render(request, "users/add_user.html", { "user_form": UserForm()})
+    return render(request, "users/add_user.html", {"user_form": UserForm()})
+
+async def delete_user(request, id):
+    if request.method == "POST":
+        async with httpx.AsyncClient() as client:
+            response = await client.delete(
+                f"http://localhost:8000/users/users/{id}/",
+                auth=("admin", "password")
+            )
+        return redirect("/users")
+
+    return render(request, "users/delete_user.html")
+
+async def edit_user(request, id):
+    if request.method == "POST":
+        async with httpx.AsyncClient() as client:
+            response = await client.put(
+                f"http://localhost:8000/users/users/{id}/",
+                auth=("admin", "password"),
+                data=request.POST
+            )
+        return redirect(f"/users/users/{id}/")
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"http://localhost:8000/users/users/{id}/", auth=("admin", "password"))
+    user = response.json()
+    
+    return render(request, "users/edit_user.html", { "user": UserForm(initial={
+        "id": user["id"],
+        "url": user["url"],
+        "username": user["username"],
+        "email": user["email"],
+        "groups": user["groups"],
+    }) })
 
 async def dogs_view(request):
     async with httpx.AsyncClient() as client:
@@ -69,7 +103,7 @@ async def dogs_view(request):
 async def dogs_detail(request, id):
     async with httpx.AsyncClient() as client:
         response = await client.get(f"http://127.0.0.1:8000/users/dogs/{id}/", auth=('admin', 'password'))
-        dog = response.json()
+    dog = response.json()
     return render(request, 'users/dog_view.html', {'dog': dog})
 
 async def add_dog(request):
@@ -79,10 +113,12 @@ async def add_dog(request):
                 f"http://localhost:8000/users/dogs/",
                 auth=("admin", "password"),
                 data=request.POST
+                
             )
         return redirect("/users/dogs")
 
     return render(request, "users/add_dog.html", { "dog_form": DogForm()})
+
 
 async def edit_dog(request, id):
     if request.method == "POST":

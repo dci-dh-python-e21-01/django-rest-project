@@ -19,4 +19,4 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class DogSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Dog
-        fields = ["id", "name", "breed", "age", "is_friendly"]
+        fields = ["id", "name", "breed", "age", "is_friendly", "url"]
