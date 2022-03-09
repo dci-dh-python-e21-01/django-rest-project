@@ -9,4 +9,3 @@ class DogForm(forms.Form):
 class UserForm(forms.Form):
     username = forms.CharField(max_length=255)
     email = forms.CharField(max_length=255)
-    groups = forms.CharField(max_length=255, required=False)

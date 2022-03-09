@@ -43,7 +43,6 @@ def local_user_view(request, pk):
 #     return render(request, 'users/user_view.html', {'user': user})
 
 
-#to be finished 
 async def add_user(request):
     if request.method == "POST":
         async with httpx.AsyncClient() as client:
@@ -68,7 +67,6 @@ async def delete_user(request, id):
 
     return render(request, "users/delete_user.html")
 
-#to be finished 
 async def edit_user(request, id):
     if request.method == "POST":
         async with httpx.AsyncClient() as client:
@@ -88,7 +86,7 @@ async def edit_user(request, id):
         "url": user["url"],
         "username": user["username"],
         "email": user["email"],
-        "groups": user["groups"],
+        
     }) })
 
 async def dogs_view(request):
