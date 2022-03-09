@@ -5,7 +5,6 @@ from .models import Dog
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer, DogSerializer
-from django.views.generic import CreateView
 
 class UserViewSet(viewsets.ModelViewSet):
     """

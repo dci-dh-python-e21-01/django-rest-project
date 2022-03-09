@@ -1,6 +1,9 @@
 {% extends "users/base.html" %}
 {% block content %}
     <h1>Add your dog</h1>
+    {% if connection_error %}
+      <p><b>Could not connect to the remote server. You will be able to add a new dog once connection is restored.</b></p>
+    {% else %}  
 <div >
     <form method="post">
         {% csrf_token %}
@@ -8,4 +11,5 @@
         <button type="submit" >Submit</button>
     </form>
 </div>    
+{% endif %} 
 {% endblock content %}

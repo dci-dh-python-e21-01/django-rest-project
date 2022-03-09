@@ -10,6 +10,12 @@
         <b>Email: </b> {{user.email}}<br>
         <b>URL: </b> {{user.url}}
       </p>
+
+      {% empty %}
+      {% if connection_error %}
+        <p><b>Could not access remote server.</b></p>
+      {% endif %}
+      
     {% endfor %}
     <h2>Local</h2>
     {% for user in local_users %}

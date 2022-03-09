@@ -13,17 +13,24 @@ def get_local_users():
 #     return User.objects.filter(id=id)
 
 async def index(request):
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            "http://localhost:8000/users/users/",  headers={"Authorization": f"Token {settings.AUTH_TOKEN}"}
-        )
-    json = response.json()
-    remote_users = json["results"]
-    local_users = await sync_to_async(get_local_users, thread_sensitive=True)()
+    context = {}
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "http://localhost:8000/users/users/",
+                headers={"Authorization": f"Token {settings.AUTH_TOKEN}"},
+            )
+        json = response.json()
+        context["remote_users"] = json["results"]
+    except httpx.RequestError as exc:
+        context["connection_error"] = True
+    context["local_users"] = await sync_to_async(
+        get_local_users, thread_sensitive=True
+    )()
     return render(
         request,
         "users/index.html",
-        {"remote_users": remote_users, "local_users": local_users},
+        context,
     )
     
 async def remote_user_view(request, id):
@@ -46,17 +53,20 @@ def local_user_view(request, pk):
 
 
 async def add_user(request):
+    context = {"user_form": UserForm()}
     if request.method == "POST":
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"http://localhost:8000/users/users/",
-                headers={"Authorization": f"Token {settings.AUTH_TOKEN}"},
-                data=request.POST
-            )
-            print(response)
-        return redirect("/users")
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"http://localhost:8000/users/users/",
+                    headers={"Authorization": f"Token {settings.AUTH_TOKEN}"},
+                    data=request.POST
+                )
+            return redirect("/users")
+        except httpx.RequestError as exc:
+            context["connection_error"] = True
 
-    return render(request, "users/add_user.html", {"user_form": UserForm()})
+    return render(request, "users/add_user.html", context)
 
 async def delete_user(request, id):
     if request.method == "POST":
@@ -92,16 +102,20 @@ async def edit_user(request, id):
     }) })
 
 async def dogs_view(request):
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
+    context = {}
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
             "http://localhost:8000/users/dogs/", headers={"Authorization": f"Token {settings.AUTH_TOKEN}"}
         )
-    json = response.json()
-    dogs = json["results"]
+        json = response.json()
+        context["dogs"] = json["results"]
+    except httpx.RequestError as exc:
+        context["connection_error"] = True
     return render(
         request,
         "users/dogs_view.html",
-        {"dogs": dogs},
+        context,
     )
 async def dogs_detail(request, id):
     async with httpx.AsyncClient() as client:
@@ -110,17 +124,20 @@ async def dogs_detail(request, id):
     return render(request, 'users/dog_view.html', {'dog': dog})
 
 async def add_dog(request):
+    context = {"dog_form": DogForm()}
     if request.method == "POST":
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"http://localhost:8000/users/dogs/",
-                headers={"Authorization": f"Token {settings.AUTH_TOKEN}"},
-                data=request.POST
-                
+        
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"http://localhost:8000/users/dogs/",
+                    headers={"Authorization": f"Token {settings.AUTH_TOKEN}"},
+                    data=request.POST
             )
-        return redirect("/users/dogs")
-
-    return render(request, "users/add_dog.html", { "dog_form": DogForm()})
+            return redirect("/users/dogs")
+        except httpx.RequestError as exc:
+            context["connection_error"] = True
+    return render(request, "users/add_dog.html", context)
 
 
 async def edit_dog(request, id):

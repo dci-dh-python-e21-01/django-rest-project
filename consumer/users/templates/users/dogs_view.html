@@ -8,6 +8,11 @@
         <b>Breed: </b> {{dog.breed}} <br>
         
       </p>
+      {% empty %}
+      {% if connection_error %}
+      <p><b>Could not connect to the remote server</b></p>
+      {% endif %}
+
     {% endfor %}
     <p>Add your dog <a href="{% url 'add_dog' %}"> here </a> </p>
 
