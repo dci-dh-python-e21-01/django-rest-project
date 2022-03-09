@@ -3,6 +3,8 @@ from asgiref.sync import sync_to_async
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .forms import DogForm, UserForm
+from django.conf import settings
+
 
 def get_local_users():
     return list(User.objects.all())
@@ -13,7 +15,7 @@ def get_local_users():
 async def index(request):
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            "http://localhost:8000/users/users/", auth=("admin", "password")
+            "http://localhost:8000/users/users/",  headers={"Authorization": f"Token {settings.AUTH_TOKEN}"}
         )
     json = response.json()
     remote_users = json["results"]
@@ -26,7 +28,7 @@ async def index(request):
     
 async def remote_user_view(request, id):
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://localhost:8000/users/users/{id}/", auth=('admin', 'password'))
+        response = await client.get(f"http://localhost:8000/users/users/{id}/", headers={"Authorization": f"Token {settings.AUTH_TOKEN}"})
         user = response.json()
     return render(request, 'users/user_view.html', {'user': user})
 
@@ -48,7 +50,7 @@ async def add_user(request):
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"http://localhost:8000/users/users/",
-                auth=("admin", "password"),
+                headers={"Authorization": f"Token {settings.AUTH_TOKEN}"},
                 data=request.POST
             )
             print(response)
@@ -61,7 +63,7 @@ async def delete_user(request, id):
         async with httpx.AsyncClient() as client:
             response = await client.delete(
                 f"http://localhost:8000/users/users/{id}/",
-                auth=("admin", "password")
+                headers={"Authorization": f"Token {settings.AUTH_TOKEN}"}
             )
         return redirect("/users")
 
@@ -72,13 +74,13 @@ async def edit_user(request, id):
         async with httpx.AsyncClient() as client:
             response = await client.put(
                 f"http://localhost:8000/users/users/{id}/",
-                auth=("admin", "password"),
+                headers={"Authorization": f"Token {settings.AUTH_TOKEN}"},
                 data=request.POST
             )
         return redirect(f"/users/users/{id}/")
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://localhost:8000/users/users/{id}/", auth=("admin", "password"))
+        response = await client.get(f"http://localhost:8000/users/users/{id}/", headers={"Authorization": f"Token {settings.AUTH_TOKEN}"})
     user = response.json()
     
     return render(request, "users/edit_user.html", { "user": UserForm(initial={
@@ -92,7 +94,7 @@ async def edit_user(request, id):
 async def dogs_view(request):
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            "http://localhost:8000/users/dogs/", auth=("admin", "password")
+            "http://localhost:8000/users/dogs/", headers={"Authorization": f"Token {settings.AUTH_TOKEN}"}
         )
     json = response.json()
     dogs = json["results"]
@@ -103,7 +105,7 @@ async def dogs_view(request):
     )
 async def dogs_detail(request, id):
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://127.0.0.1:8000/users/dogs/{id}/", auth=('admin', 'password'))
+        response = await client.get(f"http://127.0.0.1:8000/users/dogs/{id}/", headers={"Authorization": f"Token {settings.AUTH_TOKEN}"})
     dog = response.json()
     return render(request, 'users/dog_view.html', {'dog': dog})
 
@@ -112,7 +114,7 @@ async def add_dog(request):
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"http://localhost:8000/users/dogs/",
-                auth=("admin", "password"),
+                headers={"Authorization": f"Token {settings.AUTH_TOKEN}"},
                 data=request.POST
                 
             )
@@ -126,13 +128,13 @@ async def edit_dog(request, id):
         async with httpx.AsyncClient() as client:
             response = await client.put(
                 f"http://localhost:8000/users/dogs/{id}/",
-                auth=("admin", "password"),
+                headers={"Authorization": f"Token {settings.AUTH_TOKEN}"},
                 data=request.POST
             )
         return redirect(f"/users/dogs/{id}")
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://localhost:8000/users/dogs/{id}/", auth=("admin", "password"))
+        response = await client.get(f"http://localhost:8000/users/dogs/{id}/", headers={"Authorization": f"Token {settings.AUTH_TOKEN}"})
     dog = response.json()
     
     return render(request, "users/edit_dog.html", { "dog": DogForm(initial={
@@ -148,7 +150,7 @@ async def delete_dog(request, id):
         async with httpx.AsyncClient() as client:
             response = await client.delete(
                 f"http://localhost:8000/users/dogs/{id}/",
-                auth=("admin", "password")
+                headers={"Authorization": f"Token {settings.AUTH_TOKEN}"}
             )
         return redirect("/users/dogs")
 
